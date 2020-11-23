@@ -12,36 +12,43 @@ module register-license {
   import tailf-ncs {
     prefix ncs;
   }
+  import devreglic {
+    prefix devreglic;
+  }
 
   description
     "Register the device for smart licensing using an idtoken";
+
+  revision 2020-11-14 {
+    description
+      "Augmented the devreglic service and takes variables from the inventory.";
+  }
 
   revision 2019-06-10 {
     description
       "Initial revision.";
   }
 
-  list register-license {
-    description "This is an RFS skeleton service";
+  augment /devreglic:devreglic {
+    list register-license {
+      description "This is an RFS skeleton service";
 
-    key name;
-    leaf name {
-      tailf:info "Unique service id";
-      tailf:cli-allow-range;
-      type string;
-    }
-
-    uses ncs:service-data;
-    ncs:servicepoint register-license-servicepoint;
-
-    leaf device-group {
-      type leafref {
-        path "/ncs:devices/ncs:device-group/ncs:name";
+      key name;
+      leaf name {
+        tailf:info "Unique service id";
+        tailf:cli-allow-range;
+        type string;
       }
-    }
 
-    leaf idtoken {
-      type string;
+      uses ncs:service-data;
+      ncs:servicepoint register-license-servicepoint;
+
+      leaf device-group {
+        type leafref {
+          path "/ncs:devices/ncs:device-group/ncs:name";
+        }
+      }
+
     }
   }
 }

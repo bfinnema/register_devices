@@ -14,10 +14,23 @@ class ServiceCallbacks(Service):
     def cb_create(self, tctx, root, service, proplist):
         self.log.info('Service create(service=', service._path, ')')
 
+        device_group = service.device_group
+        self.log.info('*** Call_home_config, device-group: ', device_group)
+        profile = root.devreglic.inventory.device_groups.device_group[device_group].profile
+        self.log.info('*** Call_home_config, call-home profile: ', profile)
+        http_address = root.devreglic.inventory.device_groups.device_group[device_group].http_address
+        self.log.info('*** Call_home_config, call-home http address: ', http_address)
+
         vars = ncs.template.Variables()
-        vars.add('DUMMY', '127.0.0.1')
-        template = ncs.template.Template(service)
-        template.apply('call_home_config-template', vars)
+        vars.add('PROFILE', profile)
+        vars.add('HTTP_ADDRESS', http_address)
+
+        devgroups = root.devices.device_group 
+        for device in devgroups[device_group].device_name:
+            vars.add('DEVICE', device)
+            self.log.info('*** Call_home_config, device: ', device)
+            template = ncs.template.Template(service)
+            template.apply('call_home_config-template', vars)
 
     # The pre_modification() and post_modification() callbacks are optional,
     # and are invoked outside FASTMAP. pre_modification() is invoked before

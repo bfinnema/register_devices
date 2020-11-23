@@ -14,27 +14,10 @@ class ServiceCallbacks(Service):
     def cb_create(self, tctx, root, service, proplist):
         self.log.info('Service create(service=', service._path, ')')
 
-        device_group = service.device_group
-        self.log.info('*** Register_license, device-group: ', device_group)
-        idtoken = root.devreglic.inventory.device_groups.device_group[device_group].idtoken
-        self.log.info('*** Register_license, idtoken: ', idtoken)
-
-        with ncs.maapi.single_read_trans('admin', 'python') as t: 
-            root = ncs.maagic.get_root(t) 
-            devs = root.devices.device 
-            devgroups = root.devices.device_group 
-            for device in devgroups[device_group].device_name:
-                self.log.info('*** Register_license, device: ', device)
-                any = devs[device].live_status.cisco_ios_xr_stats__exec.any 
-                inp = any.get_input() 
-                inp.args = ['license smart register idtoken '+idtoken] 
-                r = any.request(inp) 
-                self.log.info('RESULT: ', r.result)
-
-        # vars = ncs.template.Variables()
-        # vars.add('DUMMY', '127.0.0.1')
-        # template = ncs.template.Template(service)
-        # template.apply('register-license-template', vars)
+        vars = ncs.template.Variables()
+        vars.add('DUMMY', '127.0.0.1')
+        template = ncs.template.Template(service)
+        template.apply('devreglic-template', vars)
 
     # The pre_modification() and post_modification() callbacks are optional,
     # and are invoked outside FASTMAP. pre_modification() is invoked before
@@ -70,7 +53,7 @@ class Main(ncs.application.Application):
         # Service callbacks require a registration for a 'service point',
         # as specified in the corresponding data model.
         #
-        self.register_service('register-license-servicepoint', ServiceCallbacks)
+        self.register_service('devreglic-servicepoint', ServiceCallbacks)
 
         # If we registered any callback(s) above, the Application class
         # took care of creating a daemon (related to the service/action point).

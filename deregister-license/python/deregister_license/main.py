@@ -14,30 +14,24 @@ class ServiceCallbacks(Service):
     def cb_create(self, tctx, root, service, proplist):
         self.log.info('Service create(service=', service._path, ')')
 
+        device_group = service.device_group
+        self.log.info('*** Deregister_license, device-group: ', device_group)
+
         with ncs.maapi.single_read_trans('admin', 'python') as t: 
             root = ncs.maagic.get_root(t) 
             devs = root.devices.device 
             devgroups = root.devices.device_group 
-            for device in devgroups[service.device_group].device_name: 
+            for device in devgroups[device_group].device_name:
+                self.log.info('*** Deregister_license, device: ', device)
                 any = devs[device].live_status.cisco_ios_xr_stats__exec.any
                 inp = any.get_input() 
-                # inp.args = ['admin','license smart deregister'] 
                 inp.args = ['license smart deregister'] 
                 r = any.request(inp) 
                 self.log.info('RESULT: ', r.result) 
 
-        # with ncs.maapi.single_read_trans('admin', 'python') as t: 
-        #     root = ncs.maagic.get_root(t) 
-        #     devs = root.devices.device 
-        #     any = devs[service.device].live_status.ios_stats__exec.any 
-        #     inp = any.get_input() 
-        #     inp.args = ['admin','license smart deregister'] 
-        #     r = any.request(inp)
-        #     self.log.info('RESULT: ', r.result)
-
-        vars = ncs.template.Variables()
-        template = ncs.template.Template(service)
-        template.apply('deregister-license-template', vars)
+        # vars = ncs.template.Variables()
+        # template = ncs.template.Template(service)
+        # template.apply('deregister-license-template', vars)
 
     # The pre_modification() and post_modification() callbacks are optional,
     # and are invoked outside FASTMAP. pre_modification() is invoked before

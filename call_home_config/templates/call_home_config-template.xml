@@ -1,19 +1,31 @@
 <config-template xmlns="http://tail-f.com/ns/config/1.0">
   <devices xmlns="http://tail-f.com/ns/ncs">
     <device>
-      <!--
-          Select the devices from some data structure in the service
-          model. In this skeleton the devices are specified in a leaf-list.
-          Select all devices in that leaf-list:
-      -->
-      <name>{/device}</name>
+      <name>{$DEVICE}</name>
       <config>
-        <!--
-            Add device-specific parameters here.
-            In this skeleton the, java code sets a variable DUMMY, use it
-            to set something on the device e.g.:
-            <ip-address-on-device>{$DUMMY}</ip-address-on-device>
-        -->
+        <call-home xmlns="http://tail-f.com/ned/cisco-ios-xr">
+          <service>
+            <active/>
+          </service>
+          <contact>
+            <smart-licensing/>
+          </contact>
+          <profile>
+            <name>{$PROFILE}</name>
+            <active/>
+            <destination>
+              <address>
+                <http>{$HTTP_ADDRESS}</http>
+              </address>
+              <transport-method>
+                <http/>
+              </transport-method>
+            </destination>
+            <reporting>
+              <smart-licensing-data/>
+            </reporting>
+          </profile>
+        </call-home>
       </config>
     </device>
   </devices>

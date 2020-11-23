@@ -12,32 +12,43 @@ module deregister-license {
   import tailf-ncs {
     prefix ncs;
   }
+  import devreglic {
+    prefix devreglic;
+  }
 
   description
     "De-register the device from smart licensing";
+
+  revision 2020-11-14 {
+    description
+      "Augmented the devreglic service and takes variables from the inventory.";
+  }
 
   revision 2019-06-10 {
     description
       "Initial revision.";
   }
 
-  list deregister-license {
-    description "This is an RFS skeleton service";
+  augment /devreglic:devreglic {
+    list deregister-license {
+      description "This is an RFS skeleton service";
 
-    key name;
-    leaf name {
-      tailf:info "Unique service id";
-      tailf:cli-allow-range;
-      type string;
-    }
+      key name;
+      leaf name {
+        tailf:info "Unique service id";
+        tailf:cli-allow-range;
+        type string;
+      }
 
-    uses ncs:service-data;
-    ncs:servicepoint deregister-license-servicepoint;
+      uses ncs:service-data;
+      ncs:servicepoint deregister-license-servicepoint;
 
-    leaf device-group {
-      type leafref {
-        path "/ncs:devices/ncs:device-group/ncs:name";
+      leaf device-group {
+        type leafref {
+          path "/ncs:devices/ncs:device-group/ncs:name";
+        }
       }
     }
+
   }
 }

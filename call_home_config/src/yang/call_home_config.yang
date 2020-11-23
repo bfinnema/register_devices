@@ -12,38 +12,40 @@ module call_home_config {
   import tailf-ncs {
     prefix ncs;
   }
+  import devreglic {
+    prefix devreglic;
+  }
 
   description
-    "Bla bla...";
+    "Call Home Config";
 
-  revision 2016-01-01 {
+  revision 2020-11-13 {
     description
       "Initial revision.";
   }
 
-  list call_home_config {
-    description "This is an RFS skeleton service";
+  augment /devreglic:devreglic {
 
-    key name;
-    leaf name {
-      tailf:info "Unique service id";
-      tailf:cli-allow-range;
-      type string;
-    }
+    list call_home_config {
+      description "This is an RFS skeleton service";
 
-    uses ncs:service-data;
-    ncs:servicepoint call_home_config-servicepoint;
+      key name;
+      leaf name {
+        tailf:info "Unique service id";
+        tailf:cli-allow-range;
+        type string;
+      }
 
-    // may replace this with other ways of refering to the devices.
-    leaf-list device {
-      type leafref {
-        path "/ncs:devices/ncs:device/ncs:name";
+      uses ncs:service-data;
+      ncs:servicepoint call_home_config-servicepoint;
+
+      leaf device-group {
+        type leafref {
+          path "/ncs:devices/ncs:device-group/ncs:name";
+        }
       }
     }
 
-    // replace with your own stuff here
-    leaf dummy {
-      type inet:ipv4-address;
-    }
   }
+
 }

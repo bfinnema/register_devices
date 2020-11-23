@@ -1,0 +1,62 @@
+module devreglic {
+
+  namespace "http://example.com/devreglic";
+  prefix devreglic;
+
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import tailf-common {
+    prefix tailf;
+  }
+  import tailf-ncs {
+    prefix ncs;
+  }
+
+  description
+    "Inventory and top service for registering devices to the Smart Licensing server.";
+
+  revision 2020-11-13 {
+    description
+      "Initial revision.";
+  }
+
+  container devreglic {
+    container inventory {
+      container device-groups {
+
+        list device-group {
+          description "This is an RFS skeleton service";
+
+          key device_group_id;
+          leaf device_group_id {
+            tailf:info "Unique device-group id";
+            type leafref {
+              path "/ncs:devices/ncs:device-group/ncs:name";
+            }
+          }
+
+          uses ncs:service-data;
+          ncs:servicepoint devreglic-servicepoint;
+
+          leaf profile {
+            type string;
+          }
+          
+          leaf http_address {
+            type string;
+          }
+
+          leaf idtoken {
+            type string;
+          }
+
+        }
+
+      }
+
+
+    }
+  }
+
+}
